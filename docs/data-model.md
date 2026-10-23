@@ -1,6 +1,6 @@
 # Data model spec (draft 1, 23 Oct 2026)
 
-Working title: Westbourne. UK launch, iPhone first, built as a Claude artifact.
+App: **Claret**. UK launch, iPhone first, built as a Claude artifact.
 
 This spec covers how the app stores what it knows: wines, places, grapes, what you saw in shops and on lists, what you drank, and what it suggested. Screens and features are covered elsewhere; they are mentioned here only where they shape the data.
 
@@ -123,6 +123,29 @@ Every node has the same envelope, whatever its type:
 | `merchant` | none | website, price tier, delivery, UK duty-paid or in bond |
 | `person` | none | likes, dislikes, limits (they carry their own `limits`, section 8) |
 
+### 4a. Tasting colours
+
+The app's colour scale is the sommelier's appearance scale. Each value is an atlas `style`-like token used three ways: the `appearance` field on a tasting, an `appearance` claim on a vintage (from the label, list or Claude's expectation), and the tint of that wine's card in the UI.
+
+| Token | Colour family | Typical wines |
+|---|---|---|
+| `water-white` | white | Very young, unoaked whites |
+| `lemon` | white | Young Riesling, Albariño, Muscadet |
+| `straw` | white | Most young whites |
+| `gold` | white | Oaked or aged whites, sweet wines |
+| `amber` | orange | Skin-contact and oxidative whites, old sweet wines |
+| `salmon` | rosé | Provence-style rosé |
+| `onion-skin` | rosé | Oeil de perdrix, aged rosé |
+| `pink` | rosé | Deeper rosé, rosado |
+| `purple` | red | Very young reds |
+| `ruby` | red | Young to mid-age reds |
+| `claret` | red | The brand accent; mid-weight Bordeaux-style reds |
+| `garnet` | red | Maturing reds |
+| `tawny` | red | Old reds, tawny Port |
+| `brick` | red | Fully mature reds |
+
+Each token has light and dark mode values in the design tokens. Colour is never the only signal: cards also carry the token's name.
+
 ### Atlas overlay
 
 Atlas entities (places, grapes, styles, merchants) are read-only in the page. When the user adds a claim about one ("I find Etna too volcanic"), the app writes a node doc with the same id holding only `claims` and `aliases`. At load, overlays are merged on top of the atlas entry.
@@ -202,6 +225,7 @@ You drank it.
 ```js
 { kind: "tasting", node: "vintage:…",
   rating: 4,                               // 1–5, half steps allowed
+  appearance: "garnet",                   // one of the tasting colours (section 4a)
   structure: { body: 3, acid: 4, tannin: 3, sweetness: 1, fruit: "savoury" },
   notes: "Olive, violets, bacon fat. Better on day two.",
   tags: ["savoury", "floral"],
